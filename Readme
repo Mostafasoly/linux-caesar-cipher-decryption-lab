@@ -1,0 +1,59 @@
+# Breaking a Caesar Cipher and Decrypting a File in Linux
+
+A hands-on cryptography lab: use Linux commands to find a hidden file, reverse a classical cipher, and decrypt an AES-256 encrypted file.
+
+## Scenario
+
+Every file in a home directory has been encrypted. As a security analyst, the task is to follow the clues, break the cipher that protects them, and recover the original data.
+
+## Workflow
+
+1. **Explore:** list the directory and read the README file for instructions.
+2. **Discover:** find a hidden file (names starting with `.`) inside a subdirectory.
+3. **Break the cipher:** decrypt the Caesar cipher (left shift of 3) in the hidden file.
+4. **Recover the data:** use the revealed command to decrypt the AES-256 file and read the hidden message.
+
+## Commands Used
+
+| Command | Purpose |
+|---------|---------|
+| `ls`, `ls -a` | List files, including hidden ones |
+| `cat` | Read file contents |
+| `cd` | Change directory |
+| `tr` | Translate characters (reverses the Caesar shift) |
+| `openssl` | Decrypt the AES-256-CBC encrypted file |
+
+### Reversing the Caesar cipher (shift of 3)
+
+```bash
+cat .hiddenfile | tr "d-za-cD-ZA-C" "a-zA-Z"
+```
+
+`tr` maps each character in the first set back to its original position in the second set, undoing the left shift.
+
+### Decrypting the file
+
+```bash
+openssl aes-256-cbc -pbkdf2 -a -d -in file.encrypted -out file.recovered -k <password>
+```
+
+| Option | Meaning |
+|--------|---------|
+| `aes-256-cbc` | Symmetric cipher and mode |
+| `-pbkdf2` | Stronger key derivation from the password |
+| `-a` | Base64 encoding |
+| `-d` | Decrypt |
+| `-in` / `-out` | Input and output files |
+| `-k` | Password |
+
+## Key Takeaways
+
+- **Caesar cipher is weak.** With only 25 possible shifts, it can be broken in seconds. It is useful for learning, not for protection.
+- **AES-256 is a modern symmetric cipher.** The same key encrypts and decrypts, so protecting the key matters most.
+- **PBKDF2 hardens the password** by making brute-force guessing much slower.
+- **Passwords on the command line are risky.** `-k` can expose the password in shell history and process lists. Real systems should use key files or prompts.
+- **Encryption protects data in use, at rest, and in transit.**
+
+## Skills Demonstrated
+
+Linux command line, file system navigation, hidden files, symmetric encryption, classical ciphers, OpenSSL, security fundamentals.
